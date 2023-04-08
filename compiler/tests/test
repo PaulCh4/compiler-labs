@@ -1,0 +1,19 @@
+1. Программа, считающая факториал числа:
+public static void main() {
+ int fact = 1;
+ for (int i = 2; i <= n; i++) {
+ fact = fact * i;
+ }
+ println(fact);
+}
+2. Программа, определяющая наибольшее число из двух заданных:
+public static void main() {
+ int num1 = 6;
+ int num2 = 8;
+ if(num1>num2){
+ println(num1);
+ }
+ else {
+ println(num2);
+ }
+}
