@@ -20,11 +20,15 @@ def loadGrammar() -> list:
 
     grammar = []
     for row in raw:
+        row = row.strip()
+        if not row:
+            continue
+        row = row.split('//')[0]
         parts = row.split()
 
         args = []
         for part in parts:
-            if part not in ["=", "+"]:
+            if part not in ["=", "+", "-x-", "-?-", "---", "-!-"]:
                 args.append(part)
 
         grammar.append(Rule(args[0], args[1:]))
@@ -106,8 +110,7 @@ def build_tree(tokens: List[Token], grammar: List[Rule]):
 def print_tree(node: Tag, indent: str = ""):
     class_name = node.__class__.__name__
     if isinstance(node, Token):
-        print(f"{indent}{TERMINAL_COLOR}|{class_name}: {node.data}{RESET_COLOR}")
-        #print(f"{indent}{TERMINAL_COLOR}Terminal_{class_name}: {node.data}{RESET_COLOR}")
+        print(f"{indent}|{TERMINAL_COLOR}{class_name}: {node.data}{RESET_COLOR}")
     elif isinstance(node, NonTerminal):
         if node.parts:
             print(f"{indent}|{NONTERMINAL_COLOR}{class_name}:{RESET_COLOR}")

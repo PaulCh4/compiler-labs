@@ -189,7 +189,7 @@ def parseLine(line):
             res.append(Identifier(line[p:p + x]))
             p += x
             continue
-        if line[p] not in [';', '+', '-', '*', '/', '(', ')', ' ']:
+        if line[p] not in [';', '+', '-', '*', '/', '(', ')', ' ', '=']:
             if not Token.error:
                 print(f"\033[91mERROR unexpected char {line[p]}\033[0m")
                 Token.error = 1
@@ -207,7 +207,7 @@ def parse_text(program):
 
     return tokens, 0
 
-    #todo print_toke_table()
+    # print_toke_table()
     # if not Token.error:
     #    variables = set()
     #    key_words = set()

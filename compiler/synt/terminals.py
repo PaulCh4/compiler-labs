@@ -9,9 +9,9 @@ class Terminal(Tag):
 
 class NonTerminal:
     def __init__(self, result, parts=None):
-        self.result = result
+        #self.result = result
         self.parts = parts if parts is not None else []
-        self.token = None
+        #self.token = None
 
 
 class Expression(NonTerminal):

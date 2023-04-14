@@ -17,3 +17,14 @@ public static void main() {
  println(num2);
  }
 }
+3. ____________________________________________________
+while(b==a){
+    int num  = a + 5;
+    num = 5 + 5;
+}
+int num  = a + 5;
+
+
+
+
+
