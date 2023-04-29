@@ -25,6 +25,10 @@ class If(Token):
     def __init__(self):
         self.data = "if"
 
+class New(Token):
+    def __init__(self):
+        self.data = "new"
+
 class Else(Token):
     def __init__(self):
         self.data = "else"
@@ -90,6 +94,18 @@ class POpen(Token):
 class PClose(Token):
     def __init__(self):
         self.data = ")"
+
+
+#[
+class SBOpen(Token):
+    def __init__(self):
+        self.data = "["
+
+#]
+class SBClose(Token):
+    def __init__(self):
+        self.data = "]"
+
 
 class Semicolon(Token):
     def __init__(self):

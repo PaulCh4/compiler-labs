@@ -1,16 +1,1 @@
-public static void main() {
- int num1 = 6;
- int num1 = 'a';
- char a = 'a';
- if(a > num2){
-    while(num1 < 5){
-        int num  = num1 + 1;
-        num = num1 + num2;
-    }
-    num  = num + num2;
-    println(num1);
- }
- else {
- println(num2);
- }
-}
+5 + -5 + -3721938709; new

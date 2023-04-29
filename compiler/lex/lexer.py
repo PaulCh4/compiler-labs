@@ -14,18 +14,57 @@ def checkIgnore(line, p) -> int:
     return 0
 
 
-def checkConstant(line, p) -> Union[tuple[int, int], tuple[Any, int], tuple[Union[int, Any], int]]:
+# def checkConstant(line, p):
+#     if line[p:p + 4] == "true" and (p + 4 >= len(line) or not line[p + 4].isalnum()):
+#         return 4, 0
+#     if line[p:p + 5] == "false" and (p + 5 >= len(line) or not line[p + 5].isalnum()):
+#         return 5, 0
+#     if line[p].isdigit():
+#         z = p
+#         e = 0
+#         while p < len(line) and line[z].isalnum():
+#             z += 1
+#             if z + 1 < len(line) and line[z + 1].isalpha() and line[z + 1] not in " ;{}()+-/*":
+#                 e = 1
+#         if e == 0:
+#             return z - p, 0
+#         else:
+#             return z - p, 10000
+#
+#     if line[p] == '\'':
+#         if line[p + 1] == '\'':
+#             return 2, 0
+#         else:
+#             if line[p:p + 3] == "\'\\\'":
+#                 return 4, 0
+#             else:
+#                 return 3, 0
+#
+#     if line[p] == '\"':
+#         z = p + 1
+#         while line[z] != '\"' or line[z - 1] == '\\':
+#             z += 1
+#             if z + 1 == len(line):
+#                 return z - p + 1, 10002
+#         if '\\' in line[p + 1:z - p + 1] and not "\\n" in line[p + 1:z - p + 1]:  # "\n"
+#             return z - p + 1, 10001
+#         return z - p + 1, 0
+#
+#     return 0, 0
+def checkConstant(line, p):
     if line[p:p + 4] == "true" and (p + 4 >= len(line) or not line[p + 4].isalnum()):
         return 4, 0
     if line[p:p + 5] == "false" and (p + 5 >= len(line) or not line[p + 5].isalnum()):
         return 5, 0
-    if line[p].isdigit():
+    if line[p].isdigit() or line[p] == '-':
         z = p
         e = 0
-        while p < len(line) and line[z].isalnum():
-            z += 1
-            if z + 1 < len(line) and line[z + 1].isalpha() and line[z + 1] not in " ;{}()+-/*":
+        while z < len(line) and (line[z].isalnum() or line[z] == '.' or line[z] == 'j' or line[z] == '-'):
+            if line[z] == 'j':
                 e = 1
+            if line[z] == '-' and z > p:
+                break
+            z += 1
         if e == 0:
             return z - p, 0
         else:
@@ -51,7 +90,6 @@ def checkConstant(line, p) -> Union[tuple[int, int], tuple[Any, int], tuple[Unio
         return z - p + 1, 0
 
     return 0, 0
-
 
 def checkType(line, p) -> int:
     if line[p:p + 4] == "bool" and (p + 4 >= len(line) or not line[p + 4].isalnum()):
@@ -107,6 +145,14 @@ def parseLine(line):
             res.append(PClose())
             p += 1
             continue
+        if line[p] == '[':
+            res.append(SBOpen())
+            p += 1
+            continue
+        if line[p] == ']':
+            res.append(SBClose())
+            p += 1
+            continue
         if line[p] == ';':
             res.append(Semicolon())
             p += 1
@@ -127,10 +173,7 @@ def parseLine(line):
             res.append(SetOp())
             p += 1
             continue
-        if line[p] in ['+', '-', '*', '/', '%']:
-            res.append(Arifm(line[p]))
-            p += 1
-            continue
+
 
         if line[p:p + 5] == "while" and (p + 5 >= len(line) or not line[p + 5].isalnum()):
             res.append(While())
@@ -138,6 +181,10 @@ def parseLine(line):
             continue
         if line[p:p + 3] == "for" and (p + 3 >= len(line) or not line[p + 3].isalnum()):
             res.append(For())
+            p += 3
+            continue
+        if line[p:p + 3] == "new" and (p + 3 >= len(line) or not line[p + 3].isalnum()):
+            res.append(New())
             p += 3
             continue
         if line[p:p + 2] == "do" and (p + 2 >= len(line) or not line[p + 2].isalnum()):
@@ -177,7 +224,10 @@ def parseLine(line):
             else:
                 res.append(Const(line[p:p + x]))
             p += x
-
+        if line[p] in ['+', '-', '*', '/', '%']:
+            res.append(Arifm(line[p]))
+            p += 1
+            continue
 
         x = checkType(line, p)
         if x > 0:

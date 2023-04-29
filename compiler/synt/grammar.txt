@@ -1,72 +1,34 @@
-        Expression = Const
---- Expression = Expression + Arifm + Arifm
-        Declaration = Type + Identifier
-        Assignment = Expression + SetOp + Expression  + Semicolon
---- Instruction = Declaration + Semicolon
-        Instruction = Assignment
-        Instruction = Declaration + SetOp + Expression + Semicolon
 
-
-
-    Instruction = While + POpen + CompExpression + PClose + BOpen + InstructionSet + BClose
-    Instruction = While + POpen + CompExpression + PClose + BOpen + Instruction + BClose
-    Instruction = For + POpen + Instruction + CompExpression + Semicolon + Expression + PClose + BOpen + InstructionSet + BClose
-    Instruction = For + POpen + Instruction + CompExpression + Semicolon + Expression + PClose + BOpen + Instruction + BClose
-
-    Instruction = Do + BOpen + InstructionSet + BClose + While + POpen + CompExpression + PClose + Semicolon
-    Instruction = Switch + POpen + Identifier + PClose + BOpen + Cases + BClose
-
-
-
-    InstructionSet = InstructionSet + Instruction
-    InstructionSet = Instruction + Instruction
-
-
-                PreCall = Identifier
-
-
----    Function = Expression + POpen + Expression + PClose
----    Function = Expression + POpen + PClose
----    Instruction = Function + Semicolon
----    PreCall = PreCall + Dot + Identifier
-
-
-                Expression = PreCall                                                                                                  // для num + A
-
-
----     Method = Declaration + POpen + PClose + BOpen + Instruction + BClose
----     Method = Declaration + POpen + PClose + BOpen + InstructionSet + BClose
----     Instruction = Method
-
-
-
-
-
-                 Expression = Expression + Arifm + Expression                                                                            //x2
-
---- Expression = PreCall + Arifm + Expression                                                                          //num + A разве такого нету уже?
---- Instruction = Expression + Semicolon
---- Expression = POpen + Expression + PClose
-
-
-    Instruction = Identifier + SetOp + Expression + Semicolon
-    Instruction = If + POpen + CompExpression + PClose + BOpen + InstructionSet + BClose
-    Instruction = If + POpen + CompExpression + PClose + BOpen + Instruction + BClose
-    Instruction = InstructionSet + Else + BOpen + InstructionSet + BClose
-    Instruction = Instruction + Else + BOpen + InstructionSet + BClose
-    Instruction = Instruction + Else + BOpen + Instruction + BClose
-    Instruction = InstructionSet + Else + BOpen + Instruction + BClose
-
-
-
-        CompExpression = Expression + Comp + Expression                                                                             //num==num  //наверное надо добавить что-то для while(true), где true == Compare
-
-
-
---- CaseLine = Case + Const + POpen + InstructionSet + PClose
---- Cases = CaseLine
---- Cases = CaseLine + CaseLine
-
-
-        InstructionSet = InstructionSet + Instruction                                                                               //x2
-        InstructionSet = Instruction + Instruction                                                                                              //x2
+CaseLine = Case + Const + POpen + InstructionSet + PClose
+Cases = CaseLine
+Cases = CaseLine + CaseLine
+Cases = Cases + CaseLine
+Expression = Const
+Method = Declaration + POpen + PClose + BOpen + InstructionSet + BClose
+Instruction = Declaration + Semicolon
+Instruction = Declaration + SetOp + Expression + Semicolon
+Instruction = Declaration + SetOp + New + Type + SBOpen + Expression + SBClose + Semicolon
+Instruction = Do + BOpen + InstructionSet + BClose + While + POpen + Expression + PClose + Semicolon
+Instruction = Expression + Arifm + Arifm
+Expression = Expression + Arifm + Expression
+Expression = Expression + Comp + Expression
+Instruction = Expression + Semicolon
+Instruction = For + POpen + Instruction + Expression + Semicolon + Instruction + PClose + BOpen + InstructionSet + BClose
+Instruction = FunctionCall + Semicolon
+PreCall = Identifier
+Expression = Identifier
+Identifier = Identifier + SBOpen + Expression + SBClose
+Instruction = Identifier + SetOp + Expression + Semicolon
+Instruction = If + POpen + Expression + PClose + BOpen + InstructionSet + BClose
+Instruction = If + POpen + Expression + PClose + BOpen + InstructionSet + BClose + Else + BOpen + InstructionSet + BClose
+InstructionSet = Instruction
+InstructionSet = InstructionSet + Instruction
+InstructionSet = InstructionSet + InstructionSet
+Expression = POpen + Expression + PClose
+PreCall = PreCall + Dot + Identifier
+FunctionCall = PreCall + POpen + Expression + PClose
+FunctionCall = PreCall + POpen + PClose
+Instruction = Switch + POpen + Expression + PClose + BOpen + Cases + BClose
+Declaration = Type + Identifier
+Declaration = Type + SBOpen + SBClose + Identifier
+Instruction = While + POpen + Expression + PClose + BOpen + InstructionSet + BClose                                                                                   //x2
