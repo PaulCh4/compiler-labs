@@ -53,9 +53,9 @@ def checkIgnore(line, p) -> int:
 #     return 0, 0
 def checkConstant(line, p):
     if line[p:p + 4] == "true" and (p + 4 >= len(line) or not line[p + 4].isalnum()):
-        return 4, 0
+        return 4, 0, True
     if line[p:p + 5] == "false" and (p + 5 >= len(line) or not line[p + 5].isalnum()):
-        return 5, 0
+        return 5, 0, False
     if line[p].isdigit() or line[p] == '-':
         z = p
         e = 0
@@ -66,30 +66,30 @@ def checkConstant(line, p):
                 break
             z += 1
         if e == 0:
-            return z - p, 0
+            return z - p, 0, int(line[p:z])
         else:
-            return z - p, 10000
+            return z - p, 10000, -1
 
     if line[p] == '\'':
         if line[p + 1] == '\'':
-            return 2, 0
+            return 2, 0, ''
         else:
             if line[p:p + 3] == "\'\\\'":
-                return 4, 0
+                return 4, 0, "\'\\\'"
             else:
-                return 3, 0
+                return 3, 0, line[p:p + 3]
 
     if line[p] == '\"':
         z = p + 1
         while line[z] != '\"' or line[z - 1] == '\\':
             z += 1
             if z + 1 == len(line):
-                return z - p + 1, 10002
+                return z - p + 1, 10002, -1
         if '\\' in line[p + 1:z - p + 1] and not "\\n" in line[p + 1:z - p + 1]:  # "\n"
-            return z - p + 1, 10001
-        return z - p + 1, 0
+            return z - p + 1, 10001, -1
+        return z - p + 1, 0, line[p:z+1]
 
-    return 0, 0
+    return 0, 0, -1
 
 def checkType(line, p) -> int:
     if line[p:p + 4] == "bool" and (p + 4 >= len(line) or not line[p + 4].isalnum()):
@@ -207,7 +207,7 @@ def parseLine(line):
             res.append(Case())
             p += 4
 
-        x, e = checkConstant(line, p)
+        x, e, value = checkConstant(line, p)
         if x > 0:
             if e == 10000 and not Token.error:
                 print(f"\033[91mERROR bad identifier {line[p:p + x]}\033[0m")
@@ -222,7 +222,7 @@ def parseLine(line):
                 Token.error = 1
                 return res, 1
             else:
-                res.append(Const(line[p:p + x]))
+                res.append(Const(value))
             p += x
         if line[p] in ['+', '-', '*', '/', '%']:
             res.append(Arifm(line[p]))
@@ -239,7 +239,7 @@ def parseLine(line):
             res.append(Identifier(line[p:p + x]))
             p += x
             continue
-        if line[p] not in [';', '+', '-', '*', '/', '(', ')', ' ', '=']:
+        if line[p] not in [';', '+', '-', '*', '/', '(', ')', ' ', '=', '[ ', ']', '{', '}']:
             if not Token.error:
                 print(f"\033[91mERROR unexpected char {line[p]}\033[0m")
                 Token.error = 1

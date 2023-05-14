@@ -1,34 +1,44 @@
+// Expression - сворачивается в const
+// Instruction - это то, что можно выполнить
+// Declaration - это то, что будет заносить новую переменную в список созданных переменных
+// PreCall - подготовка к вызову метода
+// FunctionCall - вызов метода
+// Method - объявление метода в начале программы
+// CaseLine - часный случай в case
+// Cases - набор CaseLine внутри Switch
 
-CaseLine = Case + Const + POpen + InstructionSet + PClose
+
+CaseLine = Case + Expression + BOpen + InstructionSet + BClose                                                               //0
 Cases = CaseLine
-Cases = CaseLine + CaseLine
 Cases = Cases + CaseLine
 Expression = Const
 Method = Declaration + POpen + PClose + BOpen + InstructionSet + BClose
-Instruction = Declaration + Semicolon
+Instruction = Declaration + Semicolon                                                                                   //5
 Instruction = Declaration + SetOp + Expression + Semicolon
 Instruction = Declaration + SetOp + New + Type + SBOpen + Expression + SBClose + Semicolon
-Instruction = Do + BOpen + InstructionSet + BClose + While + POpen + Expression + PClose + Semicolon
+Instruction = Do + BOpen + InstructionSet + BClose + While + Expression + Semicolon
 Instruction = Expression + Arifm + Arifm
-Expression = Expression + Arifm + Expression
+Expression = Expression + Arifm + Expression                                                                            //10
 Expression = Expression + Comp + Expression
-Instruction = Expression + Semicolon
 Instruction = For + POpen + Instruction + Expression + Semicolon + Instruction + PClose + BOpen + InstructionSet + BClose
 Instruction = FunctionCall + Semicolon
-PreCall = Identifier
+Identifier = Identifier + SBOpen + Expression + SBClose  // идентификатор элемента в массиве
+Instruction = Identifier + SetOp + Expression + Semicolon                                                               //15
+FunctionCall = Identifier + Expression
+FunctionCall = Identifier + POpen + PClose
+PreCall = Identifier + Identifier
 Expression = Identifier
-Identifier = Identifier + SBOpen + Expression + SBClose
-Instruction = Identifier + SetOp + Expression + Semicolon
-Instruction = If + POpen + Expression + PClose + BOpen + InstructionSet + BClose
-Instruction = If + POpen + Expression + PClose + BOpen + InstructionSet + BClose + Else + BOpen + InstructionSet + BClose
+Instruction = If + Expression + BOpen + InstructionSet + BClose + Else + BOpen + InstructionSet + BClose                //20
+Instruction = If + Expression + BOpen + InstructionSet + BClose
 InstructionSet = Instruction
 InstructionSet = InstructionSet + Instruction
 InstructionSet = InstructionSet + InstructionSet
-Expression = POpen + Expression + PClose
+Expression = POpen + Expression + PClose                                                                                //25
 PreCall = PreCall + Dot + Identifier
-FunctionCall = PreCall + POpen + Expression + PClose
+FunctionCall = PreCall + Expression
 FunctionCall = PreCall + POpen + PClose
-Instruction = Switch + POpen + Expression + PClose + BOpen + Cases + BClose
-Declaration = Type + Identifier
+Instruction = Switch + Expression + BOpen + Cases + BClose
+Declaration = Type + Identifier                                                                                         //30
 Declaration = Type + SBOpen + SBClose + Identifier
-Instruction = While + POpen + Expression + PClose + BOpen + InstructionSet + BClose                                                                                   //x2
+Instruction = While + Expression + BOpen + InstructionSet + BClose
+Cases = Cases + Cases

@@ -1,4 +1,4 @@
-from typing import List, Tuple, Dict
+from typing import List
 
 from synt.terminals import *
 from lex.tokens import *
@@ -21,9 +21,9 @@ def loadGrammar() -> list:
     grammar = []
     for row in raw:
         row = row.strip()
-        if not row:
-            continue
         row = row.split('//')[0]
+        if row == "":
+            continue
         parts = row.split()
 
         args = []
@@ -36,86 +36,45 @@ def loadGrammar() -> list:
     return grammar
 
 
-def error_grammar_check(tokens, p):
-    if len(tokens) >= 2:
-        invalid_sequences = [(Type, If), (While, If), (For, If)]
-
-        for seq in invalid_sequences:
-            if p+1 < len(tokens) and isinstance(tokens[p], seq[0]) and isinstance(tokens[p+1], seq[1]):
-                print(f"\033[91mError: invalid sequence {seq[0].__name__} + {seq[1].__name__}\033[0m")
-                return True
-
-        if p+1 < len(tokens) and isinstance(tokens[p], Identifier) and isinstance(tokens[p+1], Identifier):
-            print(f"\033[91mError: unexpected token: {tokens[p+1].data}\033[0m")
-            return True
-
-        if p+1 < len(tokens) and isinstance(tokens[p], Type) and not isinstance(tokens[p+1], Identifier):
-            print(f"\033[91mError: expected Identifier after Type\033[0m")
-            return True
-
-        open_parentheses = 0
-        for t in tokens:
-            if isinstance(t, POpen):
-                open_parentheses += 1
-            elif isinstance(t, PClose):
-                open_parentheses -= 1
-        if open_parentheses > 0:
-            print("\033[91mError: unclosed curly bracket )\033[0m")
-            return True
-
-        open_parentheses = 0
-        for t in tokens:
-            if isinstance(t, BOpen):
-                open_parentheses += 1
-            elif isinstance(t, BClose):
-                open_parentheses -= 1
-        if open_parentheses > 0:
-            print("\033[91mError: unclosed curly bracket }\033[0m")
-            return True
-
-    return False
-
-
 def build_tree(tokens: List[Token], grammar: List[Rule]):
     stack = []
-    p = 0
     print('\n\n\n_________ tokens _________\n')
     for i in range(len(tokens)):
+        nextToken = tokens[-i-1]
+        print(f"{NONTERMINAL_COLOR}{nextToken.__class__.__name__}:{RESET_COLOR}")
+        stack.append(nextToken)
 
-        print(f"{NONTERMINAL_COLOR}{tokens[i].__class__.__name__}:{RESET_COLOR}")
+        flag = True
+        while flag:
+            flag = False
+            for rule in grammar:
+                if len(stack) >= len(rule.parts) and all(
+                        stack[-j-1].__class__.__name__
+                        ==
+                        word for j, word in enumerate(rule.parts)
+                ):
+                    if rule == grammar[15]:
+                        if (i < len(tokens)-1) and (isinstance(tokens[-i-2], Type)):
+                            break
+                    if rule.result == "FunctionCall":
+                        if (i < len(tokens)-1) and (isinstance(tokens[-i-2], Type)):
+                            break
+                    if (i < len(tokens)-1) and \
+                            (isinstance(nextToken, Identifier)) and \
+                            (isinstance(tokens[-i-2], SBClose)):
+                        break
 
-        if error_grammar_check(tokens, p):
-            return stack, 1
-        stack.append(tokens[i])
-        p += 1
+                    class_name = rule.result
+                    parts = []
+                    for j in range(len(rule.parts)):
+                        parts.append(stack.pop())
+                    nonterminal = globals()[class_name](parts)
 
+                    stack.append(nonterminal)
+                    flag = True
+                    break
 
-        for rule in grammar:
-            if len(stack) >= len(rule.parts) and all(stack[-len(rule.parts) + i].__class__.__name__ == word for i, word in enumerate(rule.parts)):
-
-                class_name = rule.result
-                if class_name in globals() and issubclass(globals()[class_name], NonTerminal):
-                    nonterminal = globals()[class_name](rule.parts)
-                else:
-                    nonterminal = NonTerminal(rule.result, rule.parts)
-
-                for _ in rule.parts:
-                    nonterminal.parts.append(stack.pop())
-
-                stack.append(nonterminal)
+        print(*stack)
 
     return stack, 0
 
-
-def print_tree(node: Tag, indent: str = ""):
-    class_name = node.__class__.__name__
-    if isinstance(node, Token):
-        print(f"{indent}|{TERMINAL_COLOR}{class_name}: {node.data}{RESET_COLOR}")
-    elif isinstance(node, NonTerminal):
-        if node.parts:
-            print(f"{indent}|{NONTERMINAL_COLOR}{class_name}:{RESET_COLOR}")
-            for child in reversed(node.parts):
-                print_tree(child, indent + "  ")
-        else:
-            print(f"{indent}|{NONTERMINAL_COLOR}{class_name}{RESET_COLOR}")
-            pass

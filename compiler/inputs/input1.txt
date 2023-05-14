@@ -1,0 +1,4 @@
+public static void main() {
+    int[] num1 = new int[5];
+    char a='a';
+}

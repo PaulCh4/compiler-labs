@@ -3,7 +3,7 @@ class Token:
     error = 0
 
     def __str__(self):
-        return f"{self.__class__.__name__} {self.data}"
+        return f"{self.data}"
 
 class Identifier(Token):
     def __init__(self, op):
@@ -24,10 +24,6 @@ class Const(Token):
 class If(Token):
     def __init__(self):
         self.data = "if"
-
-class New(Token):
-    def __init__(self):
-        self.data = "new"
 
 class Else(Token):
     def __init__(self):
@@ -114,3 +110,7 @@ class Semicolon(Token):
 class Dot(Token):
     def __init__(self):
         self.data = "."
+
+class New(Token):
+    def __init__(self):
+        self.data = "new"
